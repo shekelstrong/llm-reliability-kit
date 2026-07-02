@@ -24,6 +24,16 @@ async def run(raw_response: str, expected_format: str = "auto") -> dict:
             expected_format = "json"
         elif text.startswith("<"):
             expected_format = "xml"
+        elif text.startswith("```"):
+            # markdown code fence — определяем по языку
+            fence_lang_match = re.match(r"^```(\w+)?", text)
+            fence_lang = fence_lang_match.group(1) if fence_lang_match else None
+            if fence_lang in ("json", None):
+                expected_format = "json"
+            elif fence_lang == "xml":
+                expected_format = "xml"
+            else:
+                expected_format = "text"
         else:
             expected_format = "text"
 
